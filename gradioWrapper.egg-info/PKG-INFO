@@ -1,3 +1,21 @@
+Metadata-Version: 2.1
+Name: gradioWrapper
+Version: 0.0.5
+Summary: A basic gradio class and class function wrapper
+Home-page: https://github.com/LVivona/gradio_wrap
+Author: LucaVivona (Luca Vivona)
+License: UNKNOWN
+Keywords: python,sockets,artificial intelligence,machine learning,visualizatio,wrapper
+Platform: UNKNOWN
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: Unix
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # gradioWrapper 🎁
 ``@Author Luca Vivona 🙈``
 
@@ -287,3 +305,4 @@ a = Pictionary()
 a.run(live=True) # or a.run()
 
 ```
+
