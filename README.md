@@ -226,7 +226,7 @@ class FSD:
         for row in range(new_height):
             for col in range(new_width):
                 old_val = pixels[row, col].copy()
-                new_val = self._get_new_val(old_val, nc)
+                new_val = self.get_new_val(old_val, nc)
                 pixels[row, col] = new_val
                 err = old_val - new_val
                 if col < new_width - 1:
