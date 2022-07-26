@@ -4,13 +4,13 @@
 ``Github`` [github/LVivona](https://github.com/LVivona/gradio_wrap)
 ## Table of contents 
 - v0.0.5
-  - Quick Start Import
-  - What is it?
-  - How does it work?
-  - Class function decorator
-  - Class decorator
-  - Examples
-  - How To Run
+  - [Quick Start Import](#quick-start-import)
+  - [What is it?](#what-is-it-)
+  - [How does it work?](#how-does-it-work-)
+  - [Class functional decorator](#class-functional-decorator)
+  - [Class decorator](#class-decorator)
+  - [Examples](#class-decorator)
+  - [How To Run](#how-to-run-%EF%B8%8F)
 
 
 ### Quick Start Import
@@ -133,7 +133,7 @@ def gradio_compile(cls):
             raise Exception('Exceeded Max Trial count without finding port')
         
     return GradioWrapper
-    ```
+```
 
 ## Examples 🧪
 
