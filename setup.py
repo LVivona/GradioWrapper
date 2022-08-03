@@ -5,7 +5,7 @@ this_directory = Path(__file__).parent
 
 
 VERSION = '0.0.6'
-DESCRIPTION = 'A basic gradio class and class function wrapper'
+DESCRIPTION = 'A basic gradio class, class function, and functional decorator'
 LONG_DESCRIPTION = (this_directory / "README.md").read_text()
 
 # Setting up
@@ -19,7 +19,7 @@ setup(
     packages=find_packages(),
     url="https://github.com/LVivona/GradioWrapper",
     install_requires=['gradio'],
-    keywords=['python', 'sockets', 'artificial intelligence', 'machine learning', 'visualizatio', 'wrapper'],
+    keywords=['python', 'sockets', 'artificial intelligence', 'machine learning', 'visualization', 'wrapper', 'decorator', 'testing'],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
