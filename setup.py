@@ -12,7 +12,7 @@ LONG_DESCRIPTION = (this_directory / "README.md").read_text()
 setup(
     name="gradioWrapper",
     version=VERSION,
-    author="LucaVivona (Luca Vivona)",
+    author="Luca Vivona",
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=LONG_DESCRIPTION,
