@@ -4,7 +4,7 @@ from pathlib import Path
 this_directory = Path(__file__).parent
 
 
-VERSION = '0.0.6'
+VERSION = '0.0.7'
 DESCRIPTION = 'A basic gradio class, class function, and functional decorator'
 LONG_DESCRIPTION = (this_directory / "README.md").read_text()
 
