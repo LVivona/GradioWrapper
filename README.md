@@ -27,7 +27,7 @@
   - [Class decorator](#class-decorator)
 
 
-  - [Examples](#class-decorator)
+  - [Examples](#examples-)
 
 
   - [How To Run](#how-to-run-%EF%B8%8F)
@@ -243,7 +243,7 @@ a.run() # or a.run()
 ```
 
 #### Run Singular Function
-```
+```python
 
 # HelloWorld function from Function Example
 ###################################
