@@ -1,6 +1,6 @@
 # gradioWrapper 🎁
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/LVivona/GradioWrapper/blob/main/LICENSE.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/LVivona/GradioWrapper/blob/main/LICENSE)
 
 ``@Author Luca Vivona 🙈``
 
