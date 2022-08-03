@@ -6,13 +6,13 @@
 
 ``Github`` [github/LVivona](https://github.com/LVivona/gradio_wrap)
 ## Table of contents 
-- v0.0.6
+- v0.0.7
 
 
   - [Quick Start Import](#quick-start-import)
 
 
-  - [Whats New in v0.0.6](#whats-new-in-v006)
+  - [Whats New in v0.0.7](#whats-new-in-v007)
 
 
   - [What is it?](#what-is-it-)
@@ -38,7 +38,7 @@
 from gradioWrapper import register, GradioCompiler, functionalCompiler, tabularGradio
 ```
 
-## Whats New in v0.0.6
+## Whats New in v0.0.7
 - Genral Functional Decorator
 - Genral Tablular Functional Decorator
 
