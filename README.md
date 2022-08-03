@@ -1,22 +1,47 @@
 # gradioWrapper 🎁
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/LVivona/GradioWrapper/blob/main/LICENSE.md)
+
 ``@Author Luca Vivona 🙈``
 
 ``Github`` [github/LVivona](https://github.com/LVivona/gradio_wrap)
 ## Table of contents 
-- v0.0.5
+- v0.0.6
+
+
   - [Quick Start Import](#quick-start-import)
+
+
+  - [Whats New in v0.0.6](#whats-new-in-v006)
+
+
   - [What is it?](#what-is-it-)
+
+
   - [How does it work?](#how-does-it-work-)
+
+
   - [Class functional decorator](#class-functional-decorator)
+
+
   - [Class decorator](#class-decorator)
+
+
   - [Examples](#class-decorator)
+
+
   - [How To Run](#how-to-run-%EF%B8%8F)
 
 
 ### Quick Start Import
 ```python
-from gradioWrapper import register, gradio_compile
+from gradioWrapper import register, GradioCompiler, functionalCompiler, tabularGradio
 ```
+
+## Whats New in v0.0.6
+- Genral Functional Decorator
+- Genral Tablular Functional Decorator
+
 
 ## What is it? 🤨
 In essence it's extension to the gradio, by using wrappers/decorators that is built into python I'm able wrap class function into overlapping function and compile the information required to run local gradio applications 
@@ -42,7 +67,7 @@ inputs and outputs. From there the wrapper class initializer will call the compi
 ### Class Functional decorator
 
 ```python
-def register(inputs, outputs):
+def register(inputs, outputs, examples=None):
     def register_gradio(func):
         def wrap(self, *args, **kwargs):            
             try:
@@ -56,7 +81,7 @@ def register(inputs, outputs):
                 result = func(self, *args, **kwargs)
                 return result
             else:
-                self.registered_gradio_functons[fn_name] = dict(inputs=inputs, outputs=outputs)
+                self.registered_gradio_functons[fn_name] = dict(inputs=inputs, outputs=outputs, examples=examples)
                 return None
         return wrap
     return register_gradio
@@ -65,13 +90,12 @@ def register(inputs, outputs):
 ### Class Decorator
 
 ```py
-def gradio_compile(cls):
+def GradioCompiler(cls):
     class GradioWrapper:
-        port_range = (7860, 7880)
-        active_port_map = {}
 
         def __init__(self) -> None:
             self.cls = cls()
+
 
         def get_funcs(self):
             return [func for func in dir(self.cls) if not func.startswith("__") and type(getattr(self.cls, func, None)) == type(self.get_funcs) ]
@@ -83,16 +107,25 @@ def gradio_compile(cls):
                 if this.__name__ == "wrap":
                     this()
 
-            demos = []
-            names = []
+            demos, names = [], []
             for func, param in self.get_registered_gradio_functons().items():                
                 names.append(func)
                 demos.append(gr.Interface(fn=getattr(self.cls, func, None),
                                             inputs=param['inputs'],
                                             outputs=param['outputs'],
+                                            examples=param['examples'],
+                                            cache_examples=kwargs['cache_examples'] if "cache_examples" in kwargs else None,
+                                            examples_per_page=kwargs['cache_examples'] if "cache_examples" in kwargs else 10,
+                                            interpretation=kwargs['interpretation'] if "interpretation" in kwargs else None,
+                                            num_shap=kwargs['num_shap'] if "num_shap" in kwargs else 2.0,
+                                            title=kwargs['title'] if "title" in kwargs else None,
+                                            article=kwargs['article'] if "article" in kwargs else None,
+                                            thumbnail=kwargs['thumbnail'] if "thumbnail" in kwargs else None,
+                                            css=kwargs['css'] if "css" in kwargs else None,
                                             live=kwargs['live'] if "live" in kwargs else False,
-                                            allow_flagging=kwargs['flagging'] if "flagging" in kwargs else 'never',
-                                            theme='default'))
+                                            allow_flagging=kwargs['allow_flagging'] if "allow_flagging" in kwargs else None,
+                                            theme='default', 
+                                            ))
                 print(f"{func}....{bcolor.BOLD}{bcolor.OKGREEN} done {bcolor.ENDC}")
 
             print("\nHappy Visualizing... 🚀")
@@ -107,183 +140,122 @@ def gradio_compile(cls):
         
 
         def run(self, **kwargs):
-            port= kwargs["port"] if "port" in kwargs else self.determinePort() 
+            port= kwargs["port"] if "port" in kwargs else DOCKER_PORT.determinePort() 
 
             self.compile(live=kwargs[ 'live' ] if "live" in kwargs else False,
-                                    allow_flagging=kwargs[ 'flagging' ] if "flagging" in kwargs else 'never',).launch(server_port=port) 
+                         allow_flagging=kwargs[ 'allow_flagging' ] if "allow_flagging" in kwargs else None,
+                         cache_examples=kwargs['cache_examples'] if "cache_examples" in kwargs else None,
+                         examples_per_page=kwargs['cache_examples'] if "cache_examples" in kwargs else 10,
+                         interpretation=kwargs['interpretation'] if "interpretation" in kwargs else None,
+                         num_shap=kwargs['num_shap'] if "num_shap" in kwargs else 2.0,
+                         title=kwargs['title'] if "title" in kwargs else None,
+                         article=kwargs['article'] if "article" in kwargs else None,
+                         thumbnail=kwargs['thumbnail'] if "thumbnail" in kwargs else None,
+                         css=kwargs['css'] if "css" in kwargs else None,
+                         theme=kwargs['theme'] if "theme" in kwargs else None, 
+                         ).launch(server_port=port,
+                                  inline= kwargs['inline'] if "inline" in kwargs else True,
+                                  share=kwargs['share'] if "share" in kwargs else None,
+                                  debug=kwargs['debug'] if "debug" in kwargs else False,
+                                  enable_queue=kwargs['enable_queue'] if "enable_queue" in kwargs else None,
+                                  max_threads=kwargs['max_threads'] if "max_threads" in kwargs else None,
+                                  auth=kwargs['auth'] if "auth" in kwargs else None,
+                                  auth_message=kwargs['auth_message'] if "auth_message" in kwargs else None,
+                                  prevent_thread_lock=kwargs['prevent_thread_lock'] if "prevent_thread_lock" in kwargs else False,
+                                  show_error=kwargs['show_error'] if "show_error" in kwargs else True,
+                                  show_tips=kwargs['show_tips'] if "show_tips" in kwargs else False,
+                                  height=kwargs['height'] if "height" in kwargs else 500,
+                                  width=kwargs['width'] if "width" in kwargs else 900,
+                                  encrypt=kwargs['encrypt'] if "encrypt" in kwargs else False,
+                                  favicon_path=kwargs['favicon_path'] if "favicon_path" in kwargs else None,
+                                  ssl_keyfile=kwargs['ssl_keyfile'] if "ssl_keyfile" in kwargs else None,
+                                  ssl_certfile=kwargs['ssl_certfile'] if "ssl_certfile" in kwargs else None,
+                                  ssl_keyfile_password=kwargs['ssl_keyfile_password'] if "ssl_keyfile_password" in kwargs else None,
+                                  quiet=kwargs['quiet'] if "quiet" in kwargs else False) 
 
-        def portConnection(self ,port : int):
-            s = socket.socket(
-                socket.AF_INET, socket.SOCK_STREAM)
-                    
-            result = s.connect_ex(("localhost", port))
-            if result == 0: return True
-            return False
 
-        def active_port(self, port:int):
-            return self.active_port_map.get(port, False)
-        
-        def determinePort(self, max_trial_count=10):
-            trial_count = 0 
-            while trial_count <= max_trial_count:
-                port=random.randint(*self.port_range)
-                if not self.portConnection(port):
-                    return port
-                trial_count += 1
-            raise Exception('Exceeded Max Trial count without finding port')
-        
     return GradioWrapper
 ```
 
+### Functional Decorator
+```python
+def functionalCompiler(inputs, outputs, **kwargs):
+    def register_func(func):
+        def wrap():
+            inter = gr.Interface(fn=func,
+                                 inputs=inputs,
+                                 outputs=outputs,
+                                 examples=kwargs['examples'] if "examples" in kwargs else None,
+                                 live=kwargs[ 'live' ] if "live" in kwargs else False,
+                                 allow_flagging=kwargs[ 'allow_flagging' ] if "allow_flagging" in kwargs else None,
+                                 cache_examples=kwargs['cache_examples'] if "cache_examples" in kwargs else None,
+                                 examples_per_page=kwargs['cache_examples'] if "cache_examples" in kwargs else 10,
+                                 interpretation=kwargs['interpretation'] if "interpretation" in kwargs else None,
+                                 num_shap=kwargs['num_shap'] if "num_shap" in kwargs else 2.0,
+                                 title=kwargs['title'] if "title" in kwargs else None,
+                                 article=kwargs['article'] if "article" in kwargs else None,
+                                 thumbnail=kwargs['thumbnail'] if "thumbnail" in kwargs else None,
+                                 css=kwargs['css'] if "css" in kwargs else None,
+                                 theme=kwargs['theme'] if "theme" in kwargs else None)
+            return inter
+        return wrap
+    return register_func
+```
 ## Examples 🧪
 
+#### Functional Example
 ```python
-from gradioWrapper import register, gradio_compile
-import gradio as gr
-#...
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
-import PIL
-import torch
-from torch import nn
-from pathlib import Path
+@functionalCompiler(inputs=[gr.Textbox(label="name")], outputs=['text'])
+def Hello_World(name):
+        return f"Hello {name}, and welcome to Gradio Flow 🤗" 
 
-@gradio_compile
-class Pictionary:
-
-    def __init__(self) -> None:
-        self.LABELS = Path('./src/examples/data/labels.txt').read_text().splitlines()
-    
-        self.model = nn.Sequential(
-                nn.Conv2d(1, 32, 3, padding='same'),
-                nn.ReLU(),
-                nn.MaxPool2d(2),
-                nn.Conv2d(32, 64, 3, padding='same'),
-                nn.ReLU(),
-                nn.MaxPool2d(2),
-                nn.Conv2d(64, 128, 3, padding='same'),
-                nn.ReLU(),
-                nn.MaxPool2d(2),
-                nn.Flatten(),
-                nn.Linear(1152, 256),
-                nn.ReLU(),
-                nn.Linear(256, len(self.LABELS)),
-                )   
-        state_dict = torch.load('./src/examples/data/pytorch_model.bin',    map_location='cpu')
-        self.model.load_state_dict(state_dict, strict=False)
-        self.model.eval()
-
-    @register(inputs="sketchpad", outputs=gr.Label())
-    def perdict(self, img) -> 'dict[str, float]':
-        if type(img) == type(None): return {}
-        x = torch.tensor(img, dtype=torch.float32).unsqueeze(0).unsqueeze(0) / 255.
-        with torch.no_grad():
-            out = self.model(x)
-        probabilities = torch.nn.functional.softmax(out[0], dim=0)
-        values, indices = torch.topk(probabilities, 5)
-        confidences = {self.LABELS[i]: v.item() for i, v in zip(indices, values)}
-        return confidences
-
-@gradio_compile
-class HelloWorld_2_0:
-
-
-    @register(inputs=["text", "text", gr.Radio(["morning", "evening", "night"])], outputs="text")
-    def Hello(self, Lname : str, Fname : str, day : 'list[any]'=["morning", "evening", "night"]) -> str:
-        return "Hello, {} {}".format(Fname, Lname)  
-
-    @register(inputs=["text", "text"], outputs="text")
-    def goodbye(self, Fname : str, Lname : str) -> str:
-        return "Goodbye, {} {}".format(Fname, Lname)  
-    
-    @register(inputs=["text", gr.Checkbox() , gr.Slider(0, 60)], outputs=["text", "number"])
-    def greet(self, name, is_morning, temperature):
-        salutation = "Good morning" if is_morning else "Good evening"
-        greeting = "%s %s. It is %s degrees today" % (salutation, name, temperature)
-        celsius = (temperature - 32) * 5 / 9
-        return (greeting, round(celsius, 2))
-
-
-@gradio_compile
-class FSD:
-
-    def get_new_val(self, old_val, nc):
-        return np.round(old_val * (nc - 1)) / (nc - 1)
-
-
-    def palette_reduce(self, img : PIL.Image.Image, nc : 'tuple[float, float, float]'=(0.0000, 0, 16)):
-        pixels = np.array(img, dtype=float) / 255
-        pixels = self.get_new_val(pixels, nc)
-
-        carr = np.array(pixels / np.max(pixels) * 255, dtype=np.uint8)
-        return PIL.Image.fromarray(carr)
-
-    @register(inputs=[gr.Image(), gr.Slider(0.00, 16)], outputs=gr.Gallery())
-    def Floyd_Steinberg_dithering(self, img : PIL.Image.Image="pill", nc : 'tuple[float, float, float]'=(0.0000, 0, 16) ) -> 'list[PIL.Image.Image]':
-        pixels = np.array(img, dtype=float) / 255
-        new_height, new_width, _ = img.shape 
-        for row in range(new_height):
-            for col in range(new_width):
-                old_val = pixels[row, col].copy()
-                new_val = self.get_new_val(old_val, nc)
-                pixels[row, col] = new_val
-                err = old_val - new_val
-                if col < new_width - 1:
-                    pixels[row, col + 1] += err * 7 / 16
-                if row < new_height - 1:
-                    if col > 0:
-                        pixels[row + 1, col - 1] += err * 3 / 16
-                    pixels[row + 1, col] += err * 5 / 16
-                    if col < new_width - 1:
-                        pixels[row + 1, col + 1] += err * 1 / 16
-        carr = np.array(pixels / np.max(pixels, axis=(0, 1)) * 255, dtype=np.uint8)
-        return [PIL.Image.fromarray(carr), self.palette_reduce(img, nc) ]
-
-
-
-@gradio_compile
-class C:
-
-    def Hello(self):
-        return "Hello"
-    
-    @register(inputs="text", outputs="text")
-    def Greeting(self, name):
-        return self.Hello() + " " + name
-
-@gradio_compile
-class stock_forecast:
-    
-    def __init__(self):
-        matplotlib.use('Agg')
-
-    @register(inputs=[gr.Checkbox(label="legend"), gr.Radio([2025, 2030, 2035, 2040], label="projct"), gr.CheckboxGroup(["Google", "Microsoft", "Gradio"], label="company"), gr.Slider(label="noise"), gr.Radio(["cross", "line", "circle"], label="style")], outputs=[gr.Plot()])
-    def plot_forcast(self, legend, project, companies , noise , styles)-> matplotlib.figure.Figure:
-        start_year = 2022
-        x = np.arange(start_year, project + 1)
-        year_count = x.shape[0]
-        plt_format = ({"cross": "X", "line": "-", "circle": "o--"})[styles]
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        for i, company in enumerate(companies):
-            series = np.arange(0, year_count, dtype=float)
-            series = series**2 * (i + 1)
-            series += np.random.rand(year_count) * noise
-            ax.plot(x, series, plt_format)
-        if legend:
-            plt.legend(companies)
-        print(type(fig))
-        return fig 
+@functionalCompiler(inputs=[gr.Textbox(label="name")], outputs=['text'])
+def Goodbye(name):
+        return f"Goodbye {name}" 
 
 ```
 
-## How to Run ⚙️
-After you add the decorators on the function you want you can initialize the class and call the function run(**kwargs). In the example below I will call a class from one of my examples section and run the code
 
+#### Class Example
+```python
+@GradioCompiler
+class Greeting:
+
+    @register(inputs=[gr.Textbox(label="name")], outputs=['text'])
+    def Hello_World(self, name):
+        return f"Hello {name}, and welcome to Gradio Flow 🤗" 
+
+    @register(inputs=[gr.Textbox(label="name")], outputs=['text'])
+    def Goodbye(name):
+        return f"Goodbye {name}" 
+
+```
+## How To Run ⚙️
+
+#### Run Class
 ```python
 
-a = Pictionary()
-a.run(live=True) # or a.run()
+# Greeting class from Class Example
+###################################
+a = Greeting()
+a.run() # or a.run()
+
+```
+
+#### Run Singular Function
+```
+
+# HelloWorld function from Function Example
+###################################
+HelloWorld().launch()
+
+```
+
+### Run Multiple Functions
+```python
+
+# HelloWorld, and Goodbye function from Function Example
+###################################
+tabularGradio([Hello_World(),Goodbye()],["Hello World", "Goodbye"])
 
 ```

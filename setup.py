@@ -17,7 +17,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=LONG_DESCRIPTION,
     packages=find_packages(),
-    url="https://github.com/LVivona/gradio_wrap",
+    url="https://github.com/LVivona/GradioWrapper",
     install_requires=['gradio'],
     keywords=['python', 'sockets', 'artificial intelligence', 'machine learning', 'visualizatio', 'wrapper'],
     classifiers=[

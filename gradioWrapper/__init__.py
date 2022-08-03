@@ -1,1 +1,1 @@
-from .compiler import register, gradio_compile
+from .compiler import register, GradioCompiler, functionalCompiler, tabularGradio
